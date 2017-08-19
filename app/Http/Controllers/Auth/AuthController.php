@@ -22,6 +22,10 @@ class AuthController extends Controller
     */
 
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
+    
+    // 追加
+    protected $redirectTo = '/';   //登録用
+    protected $loginPath = '/login';   //ログイン用
 
     /**
      * Create a new authentication controller instance.

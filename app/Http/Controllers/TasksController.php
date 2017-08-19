@@ -48,15 +48,16 @@ class TasksController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-        'status' => 'required',
+            'content' => 'required|max:255',
         ]);
-        $task = new task;
-        $task->content = $request->content;
-        $task->status = $request->status;     // 追加
-        $task->save();
-
+        
+        $request->user()->tasks()->create([
+            'content' => $request->content,
+        ]);
+    
         return redirect('/');
     }
+
 
     /**
      * Display the specified resource.
