@@ -16,13 +16,27 @@ class TasksController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+//    public function index()
+//    {
+//        $tasks = task::all();
+//
+//        return view('tasks.index', [
+//            'tasks' => $tasks,
+//        ]);
+//    }
     public function index()
     {
-        $tasks = task::all();
+        $data = [];
+        if (\Auth::check()) {
+            $user = \Auth::user();
+            $tasks = $user->tasks()->orderBy('created_at', 'content')->paginate(10);
 
-        return view('tasks.index', [
-            'tasks' => $tasks,
-        ]);
+            $data = [
+                'user' => $user,
+                'tasks' => $tasks,
+            ];
+        }
+        return view('tasks.index', $data);
     }
 
     /**
@@ -38,6 +52,7 @@ class TasksController extends Controller
             'task' => $task,
         ]);
     }
+    
 
     /**
      * Store a newly created resource in storage.
@@ -50,15 +65,14 @@ class TasksController extends Controller
         $this->validate($request, [
             'content' => 'required|max:255',
         ]);
-        
+ 
         $request->user()->tasks()->create([
             'content' => $request->content,
+            'status' => $request->status,
         ]);
     
         return redirect('/');
-    }
-
-
+    }   
     /**
      * Display the specified resource.
      *
@@ -122,4 +136,14 @@ class TasksController extends Controller
 
         return redirect('/');
     }
+//    public function destroy($id)
+//    {
+//        $task = task::find($id);
+//        
+//        if (\Auth::user()->id === $task->user_id) {
+//            $task->delete();
+//        }
+//        
+//        return redirect()->back();
+//    }
 }
